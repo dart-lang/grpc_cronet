@@ -34,6 +34,9 @@ EXPORT intptr_t InitDartApiDL(void *data);
 EXPORT bidirectional_stream* CreateStreamWithCallbackPort(stream_engine* engine,
                                                           Dart_Port send_port);
 
+// free's() what was malloc'ed()
+EXPORT void FreeMemory(void* memory);
+
 // typedef Cronet_RESULT (*EngineShutdownCallback)(Cronet_EnginePtr self);
 // typedef void (*EngineDestroyCallback)(Cronet_EnginePtr self);
 // typedef Cronet_BufferPtr (*BufferCreateCallback)(void);

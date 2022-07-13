@@ -26,44 +26,77 @@ class GrpcCronetBindings {
           lookup)
       : _lookup = lookup;
 
-  /// A very short-lived native function.
-  ///
-  /// For very short-lived functions, it is fine to call them on the main isolate.
-  /// They will block the Dart execution while running the native function, so
-  /// only do this for native functions which are guaranteed to be short-lived.
-  int sum(
-    int a,
-    int b,
+  /// Initialization
+  int InitDartApiDL(
+    ffi.Pointer<ffi.Void> data,
   ) {
-    return _sum(
-      a,
-      b,
+    return _InitDartApiDL(
+      data,
     );
   }
 
-  late final _sumPtr =
-      _lookup<ffi.NativeFunction<ffi.IntPtr Function(ffi.IntPtr, ffi.IntPtr)>>(
-          'sum');
-  late final _sum = _sumPtr.asFunction<int Function(int, int)>();
+  late final _InitDartApiDLPtr =
+      _lookup<ffi.NativeFunction<ffi.IntPtr Function(ffi.Pointer<ffi.Void>)>>(
+          'InitDartApiDL');
+  late final _InitDartApiDL =
+      _InitDartApiDLPtr.asFunction<int Function(ffi.Pointer<ffi.Void>)>();
 
-  /// A longer lived native function, which occupies the thread calling it.
-  ///
-  /// Do not call these kind of native functions in the main isolate. They will
-  /// block Dart execution. This will cause dropped frames in Flutter applications.
-  /// Instead, call these native functions on a separate isolate.
-  int sum_long_running(
-    int a,
-    int b,
+  /// Creates new bidirectional stream with [send_port] that will be used
+  /// by the engine to communicate a need for a callback to be invoked.
+  ffi.Pointer<bidirectional_stream> CreateStreamWithCallbackPort(
+    ffi.Pointer<stream_engine> engine,
+    int send_port,
   ) {
-    return _sum_long_running(
-      a,
-      b,
+    return _CreateStreamWithCallbackPort(
+      engine,
+      send_port,
     );
   }
 
-  late final _sum_long_runningPtr =
-      _lookup<ffi.NativeFunction<ffi.IntPtr Function(ffi.IntPtr, ffi.IntPtr)>>(
-          'sum_long_running');
-  late final _sum_long_running =
-      _sum_long_runningPtr.asFunction<int Function(int, int)>();
+  late final _CreateStreamWithCallbackPortPtr = _lookup<
+      ffi.NativeFunction<
+          ffi.Pointer<bidirectional_stream> Function(ffi.Pointer<stream_engine>,
+              Dart_Port)>>('CreateStreamWithCallbackPort');
+  late final _CreateStreamWithCallbackPort =
+      _CreateStreamWithCallbackPortPtr.asFunction<
+          ffi.Pointer<bidirectional_stream> Function(
+              ffi.Pointer<stream_engine>, int)>();
+
+  /// free's() what was malloc'ed()
+  void FreeMemory(
+    ffi.Pointer<ffi.Void> memory,
+  ) {
+    return _FreeMemory(
+      memory,
+    );
+  }
+
+  late final _FreeMemoryPtr =
+      _lookup<ffi.NativeFunction<ffi.Void Function(ffi.Pointer<ffi.Void>)>>(
+          'FreeMemory');
+  late final _FreeMemory =
+      _FreeMemoryPtr.asFunction<void Function(ffi.Pointer<ffi.Void>)>();
 }
+
+class CronetTaskExecutor extends ffi.Opaque {}
+
+class UploadDataProvider extends ffi.Opaque {}
+
+/// Opaque object representing Bidirectional Stream.
+class bidirectional_stream extends ffi.Struct {
+  external ffi.Pointer<ffi.Void> obj;
+
+  external ffi.Pointer<ffi.Void> annotation;
+}
+
+/// Opaque object representing a Bidirectional stream creating engine. Created
+/// and configured outside of this API to facilitate sharing with other
+/// components
+class stream_engine extends ffi.Struct {
+  external ffi.Pointer<ffi.Void> obj;
+
+  external ffi.Pointer<ffi.Void> annotation;
+}
+
+/// A port is used to send or receive inter-isolate messages
+typedef Dart_Port = ffi.Int64;

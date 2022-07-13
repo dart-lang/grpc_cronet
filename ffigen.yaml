@@ -5,6 +5,9 @@ description: |
 
   Regenerate bindings with `flutter pub run ffigen --config ffigen.yaml`.
 output: 'lib/grpc_cronet_bindings_generated.dart'
+compiler-opts:
+  - '-Isrc/third_party/grpc_support'
+  - '-DDART_SHARED_LIB'
 headers:
   entry-points:
     - 'src/grpc_cronet.h'

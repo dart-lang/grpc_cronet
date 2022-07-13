@@ -53,6 +53,10 @@ intptr_t InitDartApiDL(void *data) {
   return Dart_InitializeApiDL(data);
 }
 
+void FreeMemory(void* memory) {
+  free(memory);
+}
+
 const int read_buffer_size = 1024;
 char read_buffer[read_buffer_size];
 

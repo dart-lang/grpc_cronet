@@ -12,7 +12,7 @@ import 'package:http2/http2.dart' as http2;
 import 'package:grpc/grpc_connection_interface.dart' as grpc;
 
 import 'third_party/cronet/generated_bindings.dart' as cronet;
-import 'third_party/cronet_dart/generated_bindings.dart';
+import '../grpc_cronet_bindings_generated.dart';
 import 'third_party/grpc_support/generated_bindings.dart' as grpc_support;
 
 T throwIfNullptr<T>(T value) {
@@ -48,8 +48,8 @@ class BicronetEngine {
   BicronetEngine(this._options, this._trustedCertificate) {
     final dynamicLibraryCronet = openDynamicLibrary('cronet.104.0.5108.0');
     ffilibGrpcSupport = grpc_support.GrpcSupport(dynamicLibraryCronet);
-    ffilibCronetDart = CronetDart(openDynamicLibrary('grpc_cronet'));
-    ffilibCronetDart.InitDartApiDL(ffi.NativeApi.initializeApiDLData);
+    ffilibGrpcCronetBindings = GrpcCronetBindings(openDynamicLibrary('grpc_cronet'));
+    ffilibGrpcCronetBindings.InitDartApiDL(ffi.NativeApi.initializeApiDLData);
 
     final certificateBufferLength = _trustedCertificate == null
         ? 0 : _trustedCertificate!.length;
@@ -85,9 +85,9 @@ class BicronetEngine {
     ffilibGrpcSupport = grpc_support.GrpcSupport(ffi.DynamicLibrary.open(
         'libcronet.103.0.5060.42.${extension}'));
         // 'libcronet.104.0.5108.0.${extension}'));
-    ffilibCronetDart = CronetDart(ffi.DynamicLibrary.open(
+    ffilibGrpcCronetBindings = GrpcCronetBindings(ffi.DynamicLibrary.open(
         'libcronet_dart.${extension}'));
-    ffilibCronetDart.InitDartApiDL(ffi.NativeApi.initializeApiDLData);
+    ffilibGrpcCronetBindings.InitDartApiDL(ffi.NativeApi.initializeApiDLData);
 
     streamEngine = ffi.Pointer<grpc_support.stream_engine>.fromAddress(
         cronetEngineAddress);
@@ -126,7 +126,7 @@ class BicronetEngine {
   final List<int>? _trustedCertificate;
 
   late final grpc_support.GrpcSupport ffilibGrpcSupport;
-  late final CronetDart ffilibCronetDart;
+  late final GrpcCronetBindings ffilibGrpcCronetBindings;
   late final cronet.Cronet ffilibCronet;
   late final ffi.Pointer<grpc_support.stream_engine> streamEngine;
 
@@ -213,11 +213,11 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
         http2_headers.add(http2.Header(ascii.encode(key), utf8.encode(value)));
       }
       print('bicronet_grpc:   header[$i]: $key->$value');
-      calloc.free(p_key);
-      calloc.free(p_value);
+      engine.ffilibGrpcCronetBindings.FreeMemory(p_key.cast<ffi.Void>());
+      engine.ffilibGrpcCronetBindings.FreeMemory(p_value.cast<ffi.Void>());
     }
-    calloc.free(array_headers);
-    calloc.free(array);
+    engine.ffilibGrpcCronetBindings.FreeMemory(array_headers.cast<ffi.Void>());
+    engine.ffilibGrpcCronetBindings.FreeMemory(array.cast<ffi.Void>());
     return http2_headers;    
   }
 
@@ -327,7 +327,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
     );
 
     String? grpcAcceptEncodings = _codecRegistry?.supportedEncodings;
-    stream = engine.ffilibCronetDart.CreateStreamWithCallbackPort(
+    stream = engine.ffilibGrpcCronetBindings.CreateStreamWithCallbackPort(
         engine.streamEngine.cast<stream_engine>(),
         receivePort.sendPort.nativePort);
     print(stream);
