@@ -166,9 +166,10 @@ static void on_read_completed(bidirectional_stream* stream,
                           char* data,
                           int bytes_read) {
   log("bicronet_grpc c++ on_read_completed %p data: %p bytes_read:%d\n", stream, data, bytes_read);
+  uintptr_t u_bytes_read = bytes_read;
   DispatchCallback("on_read_completed",
                    get_port_from_stream(stream),
-                   CallbackArgBuilder(3, stream, data, bytes_read));
+                   CallbackArgBuilder(3, stream, data, u_bytes_read));
 }
 
 static void on_write_completed(bidirectional_stream* stream, const char* data) {
