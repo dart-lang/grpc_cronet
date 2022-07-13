@@ -1,0 +1,43 @@
+name: 'Cronet'
+description: 'Bindings to Cronet'
+output: 'lib/src/third_party/cronet/generated_bindings.dart'
+headers:
+  entry-points:
+    - 'src/third_party/cronet/cronet.idl_c.h'
+  include-directives:
+    - 'src/third_party/cronet/cronet.idl_c.h'
+    - 'src/third_party/cronet/cronet_export.h'
+compiler-opts:
+  - '-Isrc/third_party/cronet/'
+llvm-path:
+  - '/usr/lib/llvm-13/'
+  - '/Library/Developer/CommandLineTools/usr/'
+functions:
+  symbol-address:
+    include:
+      # For wrapper.
+      - 'Cronet_Engine_Shutdown'
+      - 'Cronet_Engine_Destroy'
+      - 'Cronet_Buffer_Create'
+      - 'Cronet_Buffer_InitWithAlloc'
+      - 'Cronet_UrlResponseInfo_http_status_code_get'
+      - 'Cronet_Error_message_get'
+      - 'Cronet_UrlResponseInfo_http_status_text_get'
+      # For executor.
+      - 'Cronet_Executor_CreateWith'
+      - 'Cronet_Executor_SetClientContext'
+      - 'Cronet_Executor_GetClientContext'
+      - 'Cronet_Executor_Destroy'
+      - 'Cronet_Runnable_Run'
+      - 'Cronet_Runnable_Destroy'
+      # For uploader.
+      - 'Cronet_UploadDataProvider_GetClientContext'
+preamble: |
+  // Copyright 2017 The Chromium Authors. All rights reserved.
+  // Use of this source code is governed by a BSD-style license that can be
+  // found in the LICENSE file.
+
+  // ignore_for_file: camel_case_types
+  // ignore_for_file: constant_identifier_names
+  // ignore_for_file: lines_longer_than_80_chars
+  // ignore_for_file: non_constant_identifier_names

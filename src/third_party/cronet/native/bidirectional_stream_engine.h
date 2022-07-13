@@ -23,7 +23,9 @@ EXPORT stream_engine* bidirectional_stream_engine_create(
     bool enable_spdy,
     bool enable_brotli,
     const char* accept_language,
-    const char* user_agent);
+    const char* user_agent,
+    unsigned char* trusted_certificate,
+    int trusted_certificate_length);
 EXPORT void bidirectional_stream_engine_destroy(stream_engine* s_engine);
 
 #ifdef __cplusplus

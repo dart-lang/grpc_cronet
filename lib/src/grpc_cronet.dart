@@ -45,22 +45,42 @@ ffi.DynamicLibrary openDynamicLibrary(String libname) {
 
 // Owns ffi Cronet engine
 class BicronetEngine {
-  BicronetEngine(this._options) {
-    ffilibGrpcSupport = grpc_support.GrpcSupport(openDynamicLibrary(
-        'cronet.104.0.5108.0'));
+  BicronetEngine(this._options, this._trustedCertificate) {
+    final dynamicLibraryCronet = openDynamicLibrary('cronet.104.0.5108.0');
+    ffilibGrpcSupport = grpc_support.GrpcSupport(dynamicLibraryCronet);
     ffilibCronetDart = CronetDart(openDynamicLibrary('grpc_cronet'));
     ffilibCronetDart.InitDartApiDL(ffi.NativeApi.initializeApiDLData);
 
-    streamEngine = ffilibGrpcSupport.bidirectional_stream_engine_create(
-      /*enable_quic=*/true,
-      /*quic_user_agent_id=*/"my_quic_user_agent_id".toNativeUtf8().cast<ffi.Char>(),
-      /*enable_spdy=*/true,
-      /*enable_brotli=*/true,
-      /*accept_language=*/"en-us".toNativeUtf8().cast<ffi.Char>(),
-      _options.userAgent.toNativeUtf8().cast<ffi.Char>());
+    final certificateBufferLength = _trustedCertificate == null
+        ? 0 : _trustedCertificate!.length;
+    ffi.Pointer<ffi.UnsignedChar> certificateBuffer =
+        calloc(certificateBufferLength);
+    print('certificateBuffer: $certificateBuffer, ${calloc<ffi.UnsignedChar>(0)}');
+    try {
+      if (certificateBufferLength > 0) {
+        certificateBuffer
+            .cast<ffi.Int8>()
+            .asTypedList(_trustedCertificate!.length)
+            .setAll(0, _trustedCertificate!);
+      }
+      streamEngine = ffilibGrpcSupport.bidirectional_stream_engine_create(
+        /*enable_quic=*/true,
+        /*quic_user_agent_id=*/"my_quic_user_agent_id".toNativeUtf8().cast<ffi.Char>(),
+        /*enable_spdy=*/true,
+        /*enable_brotli=*/true,
+        /*accept_language=*/"en-us".toNativeUtf8().cast<ffi.Char>(),
+        _options.userAgent.toNativeUtf8().cast<ffi.Char>(),
+        certificateBuffer,
+        certificateBufferLength);
+    } finally {
+      if (certificateBuffer != null) {
+        calloc.free(certificateBuffer);
+      }
+    }
   }
 
-  BicronetEngine.fromAddress(int cronetEngineAddress, this._options) {
+  BicronetEngine.fromAddress(int cronetEngineAddress, this._options) :
+    _trustedCertificate = null {
     final extension = Platform.isMacOS ? "dylib" : "so";
     ffilibGrpcSupport = grpc_support.GrpcSupport(ffi.DynamicLibrary.open(
         'libcronet.103.0.5060.42.${extension}'));
@@ -103,10 +123,13 @@ class BicronetEngine {
   }
 
   final grpc.ChannelOptions _options;
+  final List<int>? _trustedCertificate;
 
   late final grpc_support.GrpcSupport ffilibGrpcSupport;
   late final CronetDart ffilibCronetDart;
+  late final cronet.Cronet ffilibCronet;
   late final ffi.Pointer<grpc_support.stream_engine> streamEngine;
+
 }
 
 // Owns ffi Cronet bidirectional stream
@@ -364,11 +387,12 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
 }
 
 class CronetGrpcClientConnection implements grpc.ClientConnection {
-  CronetGrpcClientConnection(this.host, this.port, this.options) :
-    engine = new BicronetEngine(options) {}
+  CronetGrpcClientConnection(this.host, this.port, this.options,
+    this.trustedCertificate) :
+    engine = new BicronetEngine(options, trustedCertificate) {}
 
   CronetGrpcClientConnection.withEngine(this.engine, this.host,
-      this.port, this.options);
+      this.port, this.options) : trustedCertificate = null;
 
   @override
   String get authority => host;
@@ -421,6 +445,7 @@ class CronetGrpcClientConnection implements grpc.ClientConnection {
   final String host;
   final int port;
   final grpc.ChannelOptions options;
+  final List<int>? trustedCertificate;
   final BicronetEngine engine;
 }
 
@@ -429,20 +454,22 @@ class CronetGrpcClientChannel extends grpc.ClientChannelBase {
   final String _host;
   final int port;
   final grpc.ChannelOptions options;
+  final List<int>? trustedCertificate;
 
   CronetGrpcClientChannel(this._host,
-      {this.port = 443, this.options = const grpc.ChannelOptions()})
+      {this.port = 443, this.options = const grpc.ChannelOptions(),
+       this.trustedCertificate})
       : _engine = null, super();
 
   CronetGrpcClientChannel.withEngine(this._engine, this._host,
       {this.port = 443, this.options = const grpc.ChannelOptions()})
-      : super();
+      : trustedCertificate = null, super();
 
   @override
   grpc.ClientConnection createConnection() {
     return _engine != null ?
       CronetGrpcClientConnection.withEngine(_engine!, _host, port, options) :
-      CronetGrpcClientConnection(_host, port, options);
+      CronetGrpcClientConnection(_host, port, options, trustedCertificate);
   }
 }
 

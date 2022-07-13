@@ -87,29 +87,22 @@ class _MyAppState extends State<MyApp> {
       CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
     );
     final serverContext = SecurityContextServerCredentials.baseSecurityContext();
-    final clientContext =
-        SecurityContextChannelCredentials.baseSecurityContext();
     rootBundle.load('packages/grpc_cronet_example/assets/data/private.crt').then((bytes) {
-      List<int> list = Uint8List.view(bytes.buffer);
-      serverContext.useCertificateChainBytes(list);
-      serverContext.setTrustedCertificatesBytes(list);
-      clientContext.useCertificateChainBytes(list);
-      clientContext.setTrustedCertificatesBytes(list);
+      final privateCertifcate = Uint8List.view(bytes.buffer);
+      serverContext.useCertificateChainBytes(privateCertifcate);
+      serverContext.setTrustedCertificatesBytes(privateCertifcate);
       rootBundle.load('packages/grpc_cronet_example/assets/data/private.key').then((bytes) {
-        List<int> list = Uint8List.view(bytes.buffer);
-        serverContext.usePrivateKeyBytes(list);
-        clientContext.usePrivateKeyBytes(list);
+        final privateKey = Uint8List.view(bytes.buffer);
+        serverContext.usePrivateKeyBytes(privateKey);
         final ServerCredentials serverCredentials =
             SecurityContextServerCredentials(serverContext);
         server.serve(port: 0, security: serverCredentials).then((_) {
           print('Server listening on port ${server.port}...');
-
-          final channelCredentials = SecurityContextChannelCredentials(clientContext);
           channel.complete(grpc_cronet.CronetGrpcClientChannel(
             'localhost',
             port: server.port!,
+            trustedCertificate: privateCertifcate,
             options: ChannelOptions(
-              credentials: channelCredentials, // ChannelCredentials.insecure(), //
               codecRegistry:
                   CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
             ),

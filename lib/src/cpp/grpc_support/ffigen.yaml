@@ -1,0 +1,27 @@
+name: 'GrpcSupport'
+description: 'Bindings to Cronet Grpc Support API'
+output: 'lib/src/third_party/grpc_support/generated_bindings.dart'
+headers:
+  entry-points:
+    - 'src/third_party/grpc_support/bidirectional_stream_c.h'
+    - 'src/third_party/cronet/native/bidirectional_stream_engine.h'
+compiler-opts:
+  - '-Isrc/third_party/grpc_support'
+  - '-DDART_SHARED_LIB'
+llvm-path:
+  - '/usr/lib/llvm-13/'
+  - '/Library/Developer/CommandLineTools/usr/'
+
+comments:
+  style: any
+  length: full
+preamble: |
+  // Copyright 2016 The Chromium Authors. All rights reserved.
+  // Use of this source code is governed by a BSD-style license that can be
+  // found in the LICENSE file.
+
+  // ignore_for_file: camel_case_types
+  // ignore_for_file: constant_identifier_names
+  // ignore_for_file: lines_longer_than_80_chars
+  // ignore_for_file: non_constant_identifier_names
+

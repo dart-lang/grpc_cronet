@@ -565,6 +565,8 @@ class GrpcSupport {
     bool enable_brotli,
     ffi.Pointer<ffi.Char> accept_language,
     ffi.Pointer<ffi.Char> user_agent,
+    ffi.Pointer<ffi.UnsignedChar> trusted_certificate,
+    int trusted_certificate_length,
   ) {
     return _bidirectional_stream_engine_create(
       enable_quic ? 1 : 0,
@@ -573,6 +575,8 @@ class GrpcSupport {
       enable_brotli ? 1 : 0,
       accept_language,
       user_agent,
+      trusted_certificate,
+      trusted_certificate_length,
     );
   }
 
@@ -584,11 +588,20 @@ class GrpcSupport {
               ffi.Uint8,
               ffi.Uint8,
               ffi.Pointer<ffi.Char>,
-              ffi.Pointer<ffi.Char>)>>('bidirectional_stream_engine_create');
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              ffi.Int)>>('bidirectional_stream_engine_create');
   late final _bidirectional_stream_engine_create =
       _bidirectional_stream_engine_createPtr.asFunction<
-          ffi.Pointer<stream_engine> Function(int, ffi.Pointer<ffi.Char>, int,
-              int, ffi.Pointer<ffi.Char>, ffi.Pointer<ffi.Char>)>();
+          ffi.Pointer<stream_engine> Function(
+              int,
+              ffi.Pointer<ffi.Char>,
+              int,
+              int,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.Char>,
+              ffi.Pointer<ffi.UnsignedChar>,
+              int)>();
 
   void bidirectional_stream_engine_destroy(
     ffi.Pointer<stream_engine> s_engine,
