@@ -40,8 +40,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
 
-  grpc:
-    path: ../../grpc-dart
+  grpc: ^3.0.2
   http2: ^2.0.0
 
   # The following adds the Cupertino Icons font to your application.

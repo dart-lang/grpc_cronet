@@ -32,5 +32,6 @@ target_include_directories(grpc_cronet PUBLIC
 target_compile_definitions(grpc_cronet PUBLIC DART_SHARED_LIB)
 
 add_library("cronet.104.0.5108.0" SHARED IMPORTED)
+set_target_properties("cronet.104.0.5108.0" PROPERTIES IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/../windows/lib/cronet.104.0.5108.0.dll.lib")
 set_target_properties("cronet.104.0.5108.0" PROPERTIES IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../linux/lib/libcronet.104.0.5108.0.so")
 target_link_libraries(grpc_cronet "cronet.104.0.5108.0")

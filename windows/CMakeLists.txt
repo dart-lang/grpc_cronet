@@ -19,5 +19,6 @@ set(grpc_cronet_bundled_libraries
   # Defined in ../src/CMakeLists.txt.
   # This can be changed to accomodate different builds.
   $<TARGET_FILE:grpc_cronet>
+  "${CMAKE_CURRENT_SOURCE_DIR}/lib/cronet.104.0.5108.0.dll"
   PARENT_SCOPE
 )
