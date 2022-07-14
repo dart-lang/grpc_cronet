@@ -56,8 +56,7 @@ class BicronetEngine {
         _trustedCertificate == null ? 0 : _trustedCertificate!.length;
     ffi.Pointer<ffi.UnsignedChar> certificateBuffer =
         calloc(certificateBufferLength);
-    log(
-        'certificateBuffer: $certificateBuffer, ${calloc<ffi.UnsignedChar>(0)}');
+    log('certificateBuffer: $certificateBuffer, ${calloc<ffi.UnsignedChar>(0)}');
     try {
       if (certificateBufferLength > 0) {
         certificateBuffer
@@ -132,8 +131,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
 
   void outgoingHandler(List<int> data) async {
     outgoingSubscription.pause();
-    log(
-        'bicronet_grpc: outgoingStream waiting for isWriteStreamReady: ${isWriteStreamReady.isCompleted}');
+    log('bicronet_grpc: outgoingStream waiting for isWriteStreamReady: ${isWriteStreamReady.isCompleted}');
     await isWriteStreamReady.future;
     log('bicronet_grpc: got isWriteStreamReady');
     isWriteStreamReady = Completer<bool>();
@@ -162,8 +160,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
   }
 
   void onDoneHandler() async {
-    log(
-        'bicronet_grpc: onDone waiting for isWriteStreamReady: ${isWriteStreamReady.isCompleted}');
+    log('bicronet_grpc: onDone waiting for isWriteStreamReady: ${isWriteStreamReady.isCompleted}');
     outgoingSubscription.pause();
     await isWriteStreamReady.future;
     log('bicronet_grpc: got onDone isWriteStreamReady');
@@ -227,8 +224,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
       final arguments = message[1].buffer.asUint64List();
       switch (selector) {
         case 'on_stream_ready':
-          log(
-              'bicronet_grpc: dart got on_stream_ready ${isWriteStreamReady.isCompleted}');
+          log('bicronet_grpc: dart got on_stream_ready ${isWriteStreamReady.isCompleted}');
           if (!isWriteStreamReady.isCompleted) {
             isWriteStreamReady.complete(true);
           }
@@ -239,8 +235,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
           //    const bidirectional_stream_header_array* headers,
           //    const char* negotiated_protocol
           //  )
-          log(
-              'bicronet_grpc:   negotiated_protocol: ${ffi.Pointer.fromAddress(arguments[2]).cast<Utf8>().toDartString()}');
+          log('bicronet_grpc:   negotiated_protocol: ${ffi.Pointer.fromAddress(arguments[2]).cast<Utf8>().toDartString()}');
 
           final headerArray = ffi.Pointer.fromAddress(arguments[1])
               .cast<grpc_support.bidirectional_stream_header_array>();
@@ -289,8 +284,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
               readBufferSize);
           break;
         case 'on_write_completed':
-          log(
-              'bicronet_grpc: dart got on_write_completed buf: ${ffi.Pointer.fromAddress(arguments[0])} ${isWriteStreamReady.isCompleted}');
+          log('bicronet_grpc: dart got on_write_completed buf: ${ffi.Pointer.fromAddress(arguments[0])} ${isWriteStreamReady.isCompleted}');
           calloc.free(ffi.Pointer.fromAddress(arguments[0]));
           if (!isWriteStreamReady.isCompleted) {
             isWriteStreamReady.complete(true);
@@ -318,8 +312,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
       calloc.free(readBuffer);
       incomingStreamController.close();
     }, onError: (error, stackTrace) {
-      log(
-          'bicronet_grpc: CronetGrpcTransportStream native stream received error: $error $stackTrace');
+      log('bicronet_grpc: CronetGrpcTransportStream native stream received error: $error $stackTrace');
     });
 
     stream = engine.ffilibGrpcCronetBindings.CreateStreamWithCallbackPort(
@@ -406,8 +399,7 @@ class CronetGrpcClientConnection implements grpc.ClientConnection {
   grpc.GrpcTransportStream makeRequest(String path, Duration? timeout,
       Map<String, String> metadata, grpc.ErrorHandler onRequestFailure,
       {required grpc.CallOptions callOptions}) {
-    log(
-        'bicronet_grpc: CronetGrpcClientConnection makeRequest $path, metadata: $metadata callOptions: $callOptions');
+    log('bicronet_grpc: CronetGrpcClientConnection makeRequest $path, metadata: $metadata callOptions: $callOptions');
 
     return engine.startBidirectionalStream(
         Uri(scheme: scheme, host: authority, path: path, port: port),
