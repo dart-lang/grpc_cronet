@@ -35,9 +35,8 @@ jobs:
         run: flutter analyze --fatal-infos
         if: steps.install.outcome == 'success'
 
-  test:
-    # package:grpc_cronet is a flutter plugin
-    name: "Build and test"
+  build-example-linux:
+    name: "Build example on linux"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -54,3 +53,20 @@ jobs:
         run: sudo apt-get install ninja-build gtk+-3.0 glib-2.0 gio-2.0
       - name: Build Linux executable
         run: flutter build linux
+
+  build-example-windows:
+    name: "Build example on Windows"
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: example
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.0.2'
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build Linux executable
+        run: flutter build windows
