@@ -1,5 +1,5 @@
 name: grpc_cronet
-description: A new Flutter FFI plugin project.
+description: Flutter plugin that provides Cronet-based grpc client implementation.
 version: 0.0.1
 homepage: https://github.com/aam/grpc_cronet
 
