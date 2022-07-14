@@ -68,3 +68,5 @@ jobs:
           flutter-version: '3.0.2'
       - name: Install dependencies
         run: flutter pub get
+      - name: Build executable
+        run: flutter build windows
