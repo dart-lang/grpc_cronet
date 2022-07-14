@@ -25,7 +25,8 @@ jobs:
         with:
           channel: 'stable'
           flutter-version: '3.0.2'
-      - name: Install dependencies
+      - id: install
+        name: Install dependencies
         run: flutter pub get
       - name: Check formatting
         run: flutter format --output=none --set-exit-if-changed .
@@ -35,8 +36,7 @@ jobs:
         if: steps.install.outcome == 'success'
 
   test:
-    # package:cupertino_http is a flutter plugin
-    needs: analyze
+    # package:grpc_cronet is a flutter plugin
     name: "Build and test"
     runs-on: ubuntu-latest
     defaults:
@@ -54,4 +54,3 @@ jobs:
         run: sudo apt-get install ninja-build
       - name: Build Linux executable
         run: flutter build linux
-        if: steps.install.outcome == 'success'
