@@ -45,6 +45,7 @@ jobs:
         working-directory: example
     steps:
       - uses: actions/checkout@v3
+      - uses: ashutoshvarma/setup-ninja@v1.1
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
