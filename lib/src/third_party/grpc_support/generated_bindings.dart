@@ -6,6 +6,7 @@
 // ignore_for_file: constant_identifier_names
 // ignore_for_file: lines_longer_than_80_chars
 // ignore_for_file: non_constant_identifier_names
+// ignore_for_file: unused_element
 
 // AUTO GENERATED FILE, DO NOT EDIT.
 //

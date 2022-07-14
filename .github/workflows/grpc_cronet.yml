@@ -1,0 +1,58 @@
+name: package:grpc_cronet CI
+
+on:
+  # Run on PRs and pushes to the default branch.
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: "0 0 * * 0"
+
+env:
+  PUB_ENVIRONMENT: bot.github
+
+jobs:
+  analyze:
+    name: Lint and static analysis
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.0.2'
+      - id: install
+        name: Install dependencies
+        run: flutter pub get
+      - name: Check formatting
+        run: flutter format --output=none --set-exit-if-changed .
+        if: steps.install.outcome == 'success'
+      - name: Analyze code
+        run: flutter analyze --fatal-infos
+        if: steps.install.outcome == 'success'
+
+  test:
+    # package:cupertino_http is a flutter plugin
+    needs: analyze
+    name: "Build and test"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: example
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version: '3.0.2'
+      - id: install
+        name: Install dependencies
+        run: flutter pub get
+      - id: build
+        name: Build Linux executable
+        run: flutter build linux
+        if: steps.install.outcome == 'success'

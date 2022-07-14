@@ -42,6 +42,7 @@ dependencies:
 
   grpc: ^3.0.2
   http2: ^2.0.0
+  protobuf: ^2.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

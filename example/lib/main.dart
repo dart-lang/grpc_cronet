@@ -19,30 +19,30 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
 class GreeterService extends GreeterServiceBase {
   @override
   Future<HelloReply> sayHello(ServiceCall call, HelloRequest request) async {
-    return HelloReply()..message = 'Hello, ${request.name}!'; 
-  } 
-} 
+    return HelloReply()..message = 'Hello, ${request.name}!';
+  }
+}
 
 Future<String> connectAndSayHello(channel) async {
   final stub = GreeterClient(channel);
-  
-  try {  
-    final response = await stub.sayHello( 
-      HelloRequest()..name = 'world', 
+
+  try {
+    final response = await stub.sayHello(
+      HelloRequest()..name = 'world',
       options: CallOptions(compression: const GzipCodec()),
-    ); 
-    print('Greeter client received: ${response.message}');
+    );
+    debugPrint('Greeter client received: ${response.message}');
     return response.message;
-  } catch (e) {  
-    print('Caught error: $e'); 
+  } catch (e) {
+    debugPrint('Caught error: $e');
     return e.toString();
-  } 
+  }
 //  return await channel.shutdown();
 }
 
@@ -74,7 +74,7 @@ class SecurityContextServerCredentials extends ServerTlsCredentials {
   }
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   Completer<ClientChannelBase> channel = Completer<ClientChannelBase>();
 
   @override
@@ -86,18 +86,23 @@ class _MyAppState extends State<MyApp> {
       const <Interceptor>[],
       CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
     );
-    final serverContext = SecurityContextServerCredentials.baseSecurityContext();
-    rootBundle.load('packages/grpc_cronet_example/assets/data/private.crt').then((bytes) {
+    final serverContext =
+        SecurityContextServerCredentials.baseSecurityContext();
+    rootBundle
+        .load('packages/grpc_cronet_example/assets/data/private.crt')
+        .then((bytes) {
       final privateCertificate = Uint8List.view(bytes.buffer);
       serverContext.useCertificateChainBytes(privateCertificate);
       serverContext.setTrustedCertificatesBytes(privateCertificate);
-      rootBundle.load('packages/grpc_cronet_example/assets/data/private.key').then((bytes) {
+      rootBundle
+          .load('packages/grpc_cronet_example/assets/data/private.key')
+          .then((bytes) {
         final privateKey = Uint8List.view(bytes.buffer);
         serverContext.usePrivateKeyBytes(privateKey);
         final ServerCredentials serverCredentials =
             SecurityContextServerCredentials(serverContext);
         server.serve(port: 0, security: serverCredentials).then((_) {
-          print('Server listening on port ${server.port}...');
+          debugPrint('Server listening on port ${server.port}...');
           channel.complete(grpc_cronet.CronetGrpcClientChannel(
             'localhost',
             port: server.port!,
@@ -126,7 +131,8 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               children: [
                 FutureBuilder<String>(
-                  future: channel.future.then((value) => connectAndSayHello(value)),
+                  future:
+                      channel.future.then((value) => connectAndSayHello(value)),
                   builder: (BuildContext context, AsyncSnapshot<String> value) {
                     final displayValue =
                         (value.hasData) ? value.data : 'loading';
