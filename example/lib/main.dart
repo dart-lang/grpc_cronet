@@ -88,9 +88,9 @@ class _MyAppState extends State<MyApp> {
     );
     final serverContext = SecurityContextServerCredentials.baseSecurityContext();
     rootBundle.load('packages/grpc_cronet_example/assets/data/private.crt').then((bytes) {
-      final privateCertifcate = Uint8List.view(bytes.buffer);
-      serverContext.useCertificateChainBytes(privateCertifcate);
-      serverContext.setTrustedCertificatesBytes(privateCertifcate);
+      final privateCertificate = Uint8List.view(bytes.buffer);
+      serverContext.useCertificateChainBytes(privateCertificate);
+      serverContext.setTrustedCertificatesBytes(privateCertificate);
       rootBundle.load('packages/grpc_cronet_example/assets/data/private.key').then((bytes) {
         final privateKey = Uint8List.view(bytes.buffer);
         serverContext.usePrivateKeyBytes(privateKey);
@@ -101,7 +101,7 @@ class _MyAppState extends State<MyApp> {
           channel.complete(grpc_cronet.CronetGrpcClientChannel(
             'localhost',
             port: server.port!,
-            trustedCertificate: privateCertifcate,
+            trustedCertificate: privateCertificate,
             options: ChannelOptions(
               codecRegistry:
                   CodecRegistry(codecs: const [GzipCodec(), IdentityCodec()]),
