@@ -50,7 +50,7 @@ jobs:
           flutter-version: '3.0.2'
       - name: Install dependencies
         run: flutter pub get
-      - name: Install ninja
-        run: sudo apt-get install ninja-build
+      - name: Install required packages
+        run: sudo apt-get install ninja-build gtk+-3.0 glib-2.0 gio-2.0
       - name: Build Linux executable
         run: flutter build linux
