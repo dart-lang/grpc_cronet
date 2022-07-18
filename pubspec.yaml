@@ -1,7 +1,8 @@
 name: grpc_cronet
 description: Flutter plugin that provides Cronet-based grpc client implementation.
-version: 0.0.2
-homepage: https://github.com/aam/grpc_cronet
+version: 0.0.3
+
+repository: https://github.com/aam/grpc_cronet
 
 environment:
   sdk: '>=2.17.3 <3.0.0'
