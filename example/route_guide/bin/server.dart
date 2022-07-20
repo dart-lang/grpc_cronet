@@ -21,9 +21,8 @@ import 'dart:typed_data';
 
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:grpc/grpc.dart' as grpc;
-import 'package:grpc/grpc_connection_interface.dart';
 
-import '../lib/generated/route_guide.pbgrpc.dart';
+import 'package:route_guide/generated/route_guide.pbgrpc.dart';
 
 const coordFactor = 1e7;
 
@@ -149,7 +148,7 @@ class RouteGuideService extends RouteGuideServiceBase {
     final lat2 = end.latitude / coordFactor;
     final lon1 = start.longitude / coordFactor;
     final lon2 = end.longitude / coordFactor;
-    final R = 6371000; // metres
+    const R = 6371000; // metres
     final phi1 = toRadians(lat1);
     final phi2 = toRadians(lat2);
     final dLat = toRadians(lat2 - lat1);
@@ -205,5 +204,5 @@ Future<void> main(List<String> args) async {
 
   final server = grpc.Server([RouteGuideService()]);
   await server.serve(port: 8080, security: serverCredentials);
-  print('Server listening on port ${server.port}...');
+  print('Server listening on port ${server.port}...'); // ignore: avoid_print
 }

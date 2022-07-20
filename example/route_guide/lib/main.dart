@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import 'package:grpc_cronet/grpc_cronet.dart' as grpc_cronet;
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'generated/route_guide.pbgrpc.dart';
-import 'generated/route_guide.pb.dart';
 
 const coordFactor = 1e7;
 
@@ -29,6 +27,8 @@ class MyApp extends StatefulWidget {
 
 class MyAppState extends State<MyApp> {
   late Client client;
+  String log = "";
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +50,7 @@ class MyAppState extends State<MyApp> {
             child: Column(
               children: [
                 Text(
-                  client.log,
+                  log,
                   style: textStyle,
                 ),
               ],
@@ -59,6 +59,12 @@ class MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  void updateLog(String s) {
+    setState(() {
+      log += "$s\n";
+    });
   }
 }
 
@@ -69,21 +75,18 @@ class Client {
   late List<int> privateCertificate;
 
   final MyAppState state;
-  String log = "";
 
   printToWindow(s) {
-    state.setState(() {
-      log += "$s\n";
-    });
+    state.updateLog(s);
   }
 
   Client(rootBundle, this.state) {
     rootBundle
-        .load('packages/grpc_cronet_example/assets/data/private.crt')
+        .load('packages/route_guide/assets/data/private.crt')
         .then((bytes) {
       privateCertificate = Uint8List.view(bytes.buffer);
       rootBundle
-          .load('packages/grpc_cronet_example/assets/data/route_guide_db.json')
+          .load('packages/route_guide/assets/data/route_guide_db.json')
           .then((dbData) {
         String sData = utf8.decode(Uint8List.view(dbData.buffer));
         final List db = jsonDecode(sData);
@@ -108,7 +111,7 @@ class Client {
         trustedCertificate: privateCertificate,
       );
       stub = RouteGuideClient(channel,
-          options: CallOptions(timeout: Duration(seconds: 30)));
+          options: CallOptions(timeout: const Duration(seconds: 30)));
 
       // Run all of the demos in order.
       try {
@@ -216,7 +219,7 @@ class Client {
     Stream<RouteNote> outgoingNotes() async* {
       for (final note in notes) {
         // Short delay to simulate some other interaction.
-        await Future.delayed(Duration(milliseconds: 10));
+        await Future.delayed(const Duration(milliseconds: 10));
         printToWindow(
             'Sending message ${note.message} at ${note.location.latitude}, '
             '${note.location.longitude}');
