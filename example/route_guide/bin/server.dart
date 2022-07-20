@@ -192,8 +192,7 @@ class SecurityContextServerCredentials extends grpc.ServerTlsCredentials {
 }
 
 Future<void> main(List<String> args) async {
-  final serverContext =
-      SecurityContextServerCredentials.baseSecurityContext();
+  final serverContext = SecurityContextServerCredentials.baseSecurityContext();
   final bytes = await File('lib/assets/data/private.crt').readAsBytes();
   final privateCertificate = Uint8List.view(bytes.buffer);
   serverContext.useCertificateChainBytes(privateCertificate);

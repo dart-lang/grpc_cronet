@@ -268,7 +268,8 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
           final bytesRead = arguments[2];
           log('bicronet_grpc:  data: $data bytes_read: $bytesRead');
           incomingStreamController.add(http2.DataStreamMessage(
-              Int8List.fromList(data.cast<ffi.Uint8>().asTypedList(bytesRead))));
+              Int8List.fromList(
+                  data.cast<ffi.Uint8>().asTypedList(bytesRead))));
 
           engine.ffilibGrpcSupport.bidirectional_stream_read(
               ffi.Pointer.fromAddress(arguments[0])

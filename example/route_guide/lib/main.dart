@@ -50,8 +50,8 @@ class MyAppState extends State<MyApp> {
             child: Column(
               children: [
                 Text(
-                    client.log,
-                    style: textStyle,
+                  client.log,
+                  style: textStyle,
                 ),
               ],
             ),
@@ -72,7 +72,9 @@ class Client {
   String log = "";
 
   printToWindow(s) {
-    state.setState(() { log += "$s\n"; });
+    state.setState(() {
+      log += "$s\n";
+    });
   }
 
   Client(rootBundle, this.state) {
@@ -80,45 +82,46 @@ class Client {
         .load('packages/grpc_cronet_example/assets/data/private.crt')
         .then((bytes) {
       privateCertificate = Uint8List.view(bytes.buffer);
-      rootBundle.load('packages/grpc_cronet_example/assets/data/route_guide_db.json').then(
-        (dbData) {
-          String sData = utf8.decode(Uint8List.view(dbData.buffer));
-          final List db = jsonDecode(sData);
-          featuresDbCompleter.complete(
-            db.map((entry) {
-              final location = Point()
-                ..latitude = entry['location']['latitude']
-                ..longitude = entry['location']['longitude'];
-              return Feature()
-                ..name = entry['name']
-                ..location = location;
-            }).toList());
-        });
+      rootBundle
+          .load('packages/grpc_cronet_example/assets/data/route_guide_db.json')
+          .then((dbData) {
+        String sData = utf8.decode(Uint8List.view(dbData.buffer));
+        final List db = jsonDecode(sData);
+        featuresDbCompleter.complete(db.map((entry) {
+          final location = Point()
+            ..latitude = entry['location']['latitude']
+            ..longitude = entry['location']['longitude'];
+          return Feature()
+            ..name = entry['name']
+            ..location = location;
+        }).toList());
       });
+    });
   }
 
   Future<String> run() async {
     try {
-    featuresDb = await featuresDbCompleter.future;
-    final channel = grpc_cronet.CronetGrpcClientChannel('localhost',
+      featuresDb = await featuresDbCompleter.future;
+      final channel = grpc_cronet.CronetGrpcClientChannel(
+        'localhost',
         port: 8080,
         trustedCertificate: privateCertificate,
-        );
-    stub = RouteGuideClient(channel,
-        options: CallOptions(timeout: Duration(seconds: 30)));
+      );
+      stub = RouteGuideClient(channel,
+          options: CallOptions(timeout: Duration(seconds: 30)));
 
-    // Run all of the demos in order.
-    try {
-      await runGetFeature();
-      await runListFeatures();
-      await runRecordRoute();
-      await runRouteChat();
-    } catch (e) {
-      printToWindow('Caught error: $e');
-    }
-    await channel.shutdown();
-    return "All done!";
-    } catch(e, st) {
+      // Run all of the demos in order.
+      try {
+        await runGetFeature();
+        await runListFeatures();
+        await runRecordRoute();
+        await runRouteChat();
+      } catch (e) {
+        printToWindow('Caught error: $e');
+      }
+      await channel.shutdown();
+      return "All done!";
+    } catch (e, st) {
       printToWindow('Got $e, $st');
       rethrow;
     }
@@ -214,7 +217,8 @@ class Client {
       for (final note in notes) {
         // Short delay to simulate some other interaction.
         await Future.delayed(Duration(milliseconds: 10));
-        printToWindow('Sending message ${note.message} at ${note.location.latitude}, '
+        printToWindow(
+            'Sending message ${note.message} at ${note.location.latitude}, '
             '${note.location.longitude}');
         yield note;
       }
