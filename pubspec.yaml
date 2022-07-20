@@ -34,4 +34,5 @@ flutter:
         ffiPlugin: true
 
 false_secrets:
- - /example/lib/assets/data/private.key
+ - /example/helloworld/lib/assets/data/private.key
+ - /example/route_guide/lib/assets/data/private.key
