@@ -10,9 +10,8 @@ import 'package:grpc/grpc_connection_interface.dart';
 import 'package:grpc_cronet/grpc_cronet.dart' as grpc_cronet;
 import 'package:flutter/services.dart' show rootBundle;
 
+import 'common.dart';
 import 'generated/route_guide.pbgrpc.dart';
-
-const coordFactor = 1e7;
 
 void main() {
   runApp(const MyApp());
@@ -111,7 +110,18 @@ class Client {
         trustedCertificate: privateCertificate,
       );
       stub = RouteGuideClient(channel,
-          options: CallOptions(timeout: const Duration(seconds: 30)));
+          options: CallOptions(timeout: const Duration(seconds: 300)));
+
+      // Warmup
+      await Future.wait(
+          List.generate(1000, (_) => runListFeatures(verbose: false)));
+      // Actual run
+      for (final count in benchmarkFeaturesCounts) {
+        final sw = Stopwatch()..start();
+        await Future.wait(
+            List.generate(count, (_) => runListFeatures(verbose: false)));
+        printToWindow("$count requests took ${sw.elapsedMilliseconds}ms");
+      }
 
       // Run all of the demos in order.
       try {
@@ -157,7 +167,7 @@ class Client {
   /// Run the listFeatures demo. Calls listFeatures with a rectangle containing
   /// all of the features in the pre-generated database. Prints each response as
   /// it comes in.
-  Future<void> runListFeatures() async {
+  Future<void> runListFeatures({bool verbose = true}) async {
     final lo = Point()
       ..latitude = 400000000
       ..longitude = -750000000;
@@ -168,9 +178,13 @@ class Client {
       ..lo = lo
       ..hi = hi;
 
-    printToWindow('Looking for features between 40, -75 and 42, -73');
+    if (verbose) {
+      printToWindow('Looking for features between 40, -75 and 42, -73');
+    }
     await for (var feature in stub.listFeatures(rect)) {
-      printFeature(feature);
+      if (verbose) {
+        printFeature(feature);
+      }
     }
   }
 
