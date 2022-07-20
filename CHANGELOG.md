@@ -1,3 +1,7 @@
+## 0.0.4
+* Add route_guide example
+* Fix few bugs that were exposed by route_guide example
+
 ## 0.0.3
 
 * Use `repository` instead of `homepage` in pubspec.yaml
