@@ -31,6 +31,9 @@ jobs:
       - name: Check formatting
         run: flutter format --output=none --set-exit-if-changed .
         if: steps.install.outcome == 'success'
+      - name: Download dependencies
+        run: flutter pub get
+        if: steps.install.outcome == 'success'
       - name: Analyze code
         run: flutter analyze --fatal-infos
         if: steps.install.outcome == 'success'
@@ -40,14 +43,14 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: example
+        working-directory: example/helloworld
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           flutter-version: '3.0.2'
-      - name: Install dependencies
+      - name: Download dependencies
         run: flutter pub get
       - name: Install required packages
         run: sudo apt-get install ninja-build gtk+-3.0 glib-2.0 gio-2.0
@@ -59,14 +62,14 @@ jobs:
     runs-on: windows-latest
     defaults:
       run:
-        working-directory: example
+        working-directory: example/helloworld
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           flutter-version: '3.0.2'
-      - name: Install dependencies
+      - name: Download dependencies
         run: flutter pub get
       - name: Build executable
         run: flutter build windows
