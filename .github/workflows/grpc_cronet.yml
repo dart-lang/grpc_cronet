@@ -31,8 +31,9 @@ jobs:
       - name: Check formatting
         run: flutter format --output=none --set-exit-if-changed .
         if: steps.install.outcome == 'success'
-      - name: Download dependencies
+      - name: Download route_guide dependencies
         run: flutter pub get
+        working-directory: example/route_guide
         if: steps.install.outcome == 'success'
       - name: Analyze code
         run: flutter analyze --fatal-infos
