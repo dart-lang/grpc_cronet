@@ -3,9 +3,10 @@ library grpc_cronet;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi' as ffi;
 import 'dart:io';
 import 'dart:isolate';
-import 'dart:ffi' as ffi;
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:grpc/grpc_connection_interface.dart' as grpc;
@@ -267,15 +268,7 @@ class CronetGrpcTransportStream implements grpc.GrpcTransportStream {
           final bytesRead = arguments[2];
           log('bicronet_grpc:  data: $data bytes_read: $bytesRead');
           incomingStreamController.add(http2.DataStreamMessage(
-              data.cast<ffi.Uint8>().asTypedList(bytesRead)));
-
-          if (trailers.isNotEmpty) {
-            log('bicronet_grpc: trailers is not empty: ${trailers.length}');
-            incomingStreamController.add(http2.HeadersStreamMessage(
-                List<http2.Header>.from(trailers),
-                endStream: true));
-            trailers.clear();
-          }
+              Int8List.fromList(data.cast<ffi.Uint8>().asTypedList(bytesRead))));
 
           engine.ffilibGrpcSupport.bidirectional_stream_read(
               ffi.Pointer.fromAddress(arguments[0])

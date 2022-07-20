@@ -38,7 +38,7 @@ dependencies:
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
-    path: ../
+    path: ../../
 
   grpc: ^3.0.2
   http2: ^2.0.0
@@ -74,6 +74,7 @@ flutter:
   assets:
     - packages/grpc_cronet_example/assets/data/private.crt
     - packages/grpc_cronet_example/assets/data/private.key
+    - packages/grpc_cronet_example/assets/data/route_guide_db.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

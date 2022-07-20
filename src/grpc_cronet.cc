@@ -4,28 +4,6 @@
 
 #include "grpc_cronet.h"
 
-// // A very short-lived native function.
-// //
-// // For very short-lived functions, it is fine to call them on the main isolate.
-// // They will block the Dart execution while running the native function, so
-// // only do this for native functions which are guaranteed to be short-lived.
-// FFI_PLUGIN_EXPORT intptr_t sum(intptr_t a, intptr_t b) { return a + b; }
-
-// // A longer-lived native function, which occupies the thread calling it.
-// //
-// // Do not call these kind of native functions in the main isolate. They will
-// // block Dart execution. This will cause dropped frames in Flutter applications.
-// // Instead, call these native functions on a separate isolate.
-// FFI_PLUGIN_EXPORT intptr_t sum_long_running(intptr_t a, intptr_t b) {
-//   // Simulate work.
-// #if _WIN32
-//   Sleep(5000);
-// #else
-//   usleep(5000 * 1000);
-// #endif
-//   return a + b;
-// }
-
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,6 +17,7 @@
 #include "third_party/cronet/native/bidirectional_stream_engine.h"
 
 void log(const char* format, ...) {
+#ifdef _DEBUG
   va_list args;
   va_start(args, format);
 #ifdef ANDROID
@@ -47,6 +26,7 @@ void log(const char* format, ...) {
     vfprintf(stderr, format, args);
 #endif
   va_end(args);
+#endif  // _DEBUG
 }
 
 intptr_t InitDartApiDL(void *data) {
@@ -265,4 +245,3 @@ bidirectional_stream* CreateStreamWithCallbackPort(stream_engine* engine,
 
   return bidirectional_stream_create(engine, annotation, &callbacks);
 }
-
