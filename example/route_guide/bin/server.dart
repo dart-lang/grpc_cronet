@@ -14,7 +14,6 @@
 // limitations under the License.
 
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math' show atan2, cos, max, min, pi, sin, sqrt;
 import 'dart:io';
 import 'dart:typed_data';
@@ -22,24 +21,8 @@ import 'dart:typed_data';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:grpc/grpc.dart' as grpc;
 
+import 'package:route_guide/common.dart';
 import 'package:route_guide/generated/route_guide.pbgrpc.dart';
-
-const coordFactor = 1e7;
-
-final List<Feature> featuresDb = _readDatabase();
-
-List<Feature> _readDatabase() {
-  final dbData = File('lib/assets/data/route_guide_db.json').readAsStringSync();
-  final List db = jsonDecode(dbData);
-  return db.map((entry) {
-    final location = Point()
-      ..latitude = entry['location']['latitude']
-      ..longitude = entry['location']['longitude'];
-    return Feature()
-      ..name = entry['name']
-      ..location = location;
-  }).toList();
-}
 
 class RouteGuideService extends RouteGuideServiceBase {
   final routeNotes = <Point, List<RouteNote>>{};

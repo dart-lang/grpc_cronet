@@ -19,8 +19,14 @@ Then, to run the server:
 $ dart bin/server.dart
 ```
 
-Likewise, to run the client:
+To run the grpc-cronet flutter client:
 
 ```sh
 $ flutter run -d linux
+```
+
+To run dart:io dart cli client
+
+```sh
+$ dart bin/client.dart
 ```
