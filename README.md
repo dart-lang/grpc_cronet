@@ -1,10 +1,12 @@
-# grpc_cronet
+[![package:grpc_cronet CI](https://github.com/dart-lang/grpc_cronet/actions/workflows/grpc_cronet.yml/badge.svg)](https://github.com/dart-lang/grpc_cronet/actions/workflows/grpc_cronet.yml)
+[![pub package](https://img.shields.io/pub/v/grpc_cronet.svg)](https://pub.dev/packages/grpc_cronet)
+[![package publisher](https://img.shields.io/pub/publisher/grpc_cronet.svg)](https://pub.dev/packages/grpc_cronet/publisher)
 
-Flutter dart:grpc implementation that uses cronet native library.
+Flutter dart:grpc implementation that uses the Cronet native library.
 
-Uses chromium cronet libraries patched in https://chromium-review.googlesource.com/c/chromium/src/+/3761158.
+Uses Chromium Cronet libraries patched in https://chromium-review.googlesource.com/c/chromium/src/+/3761158.
 
-# Performance
+## Performance
 
 As number of concurrent requests increases use of cronet for grpc client shows significant improvements over dart:io one.
 This is what example/route_guide [flutter cronet client](example/route_guide/lib/main.dart) vs [dart cli dart:io client](example/route_guide/bin/client.dart) shows:

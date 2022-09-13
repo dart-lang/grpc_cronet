@@ -2,7 +2,6 @@
 
 * Include copyright headers
 
-
 ## 0.0.4
 
 * Add route_guide example
