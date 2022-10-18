@@ -1,3 +1,8 @@
+## 0.0.6-dev
+
+* Add 'experimental' messaging to the readme
+* Update the pubspec `repository` field
+
 ## 0.0.5
 
 * Include copyright headers
