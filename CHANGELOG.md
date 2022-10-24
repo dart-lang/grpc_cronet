@@ -1,4 +1,4 @@
-## 0.0.6-dev
+## 0.0.6
 
 * Add 'experimental' messaging to the readme
 * Update the pubspec `repository` field
