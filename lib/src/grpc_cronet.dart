@@ -13,6 +13,7 @@ import 'dart:isolate';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
+import 'package:grpc/grpc.dart' as grpc_core;
 import 'package:grpc/grpc_connection_interface.dart' as grpc;
 import 'package:http2/http2.dart' as http2;
 
@@ -425,6 +426,11 @@ class CronetGrpcClientConnection implements grpc.ClientConnection {
   @override
   Future<void> terminate() async {
     log('bicronet_grpc: terminating this GrpcClientConnection');
+  }
+
+  @override
+  set onStateChanged(void Function(grpc_core.ConnectionState) cb) {
+    // Unsupported at the moment.
   }
 
   final String host;

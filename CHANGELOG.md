@@ -1,3 +1,7 @@
+## 0.0.7
+
+* Ensure grpc 3.1.0 (latest available) compatibility
+
 ## 0.0.6
 
 * Add 'experimental' messaging to the readme
