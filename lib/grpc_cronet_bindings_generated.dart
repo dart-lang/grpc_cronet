@@ -13,7 +13,7 @@ import 'dart:ffi' as ffi;
 
 /// Bindings for `src/grpc_cronet.h`.
 ///
-/// Regenerate bindings with `flutter pub run ffigen --config ffigen.yaml`.
+/// Regenerate bindings with `dart run ffigen --config ffigen.yaml`.
 ///
 class GrpcCronetBindings {
   /// Holds the symbol lookup function.
